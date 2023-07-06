@@ -30,7 +30,7 @@ enemyattack_low = 60
 enemyattack_high = 80
 
 while player_health > 0:
-    dmg = random.randrange(enemyattack_low, enemyattack_high)
+    damage = random.randrange(enemyattack_low, enemyattack_high)
     player_health = player_health - damage
 
     if player_health <= 30:
