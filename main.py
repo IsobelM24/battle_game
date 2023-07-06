@@ -98,19 +98,19 @@ def magic(player):
     player.reduce_mp(spell.cost)
 
     if spell.type == "white":
-        enemy.heal(magic_damage)
-        print(bcolours.OKBLUE + spell.name + " heals "+ enemy.name + " for", str(magic_damage), "Hp." + bcolours.ENDC)
+        player.heal(magic_damage)
+        print(bcolours.OKBLUE + spell.name + " heals "+ player.name + " for", str(magic_damage), "Hp." + bcolours.ENDC)
 
     elif spell.type == "black":
-            target = random.randrange(0, 3)
+            target = random.randrange(0, len(enemies))
+            enemy = enemies[target]
+            enemy.take_damage(magic_damage)
+            print(bcolours.OKBLUE + "\n" + player.name.replace(" ","") + "'s " + spell.name + " deals ", str(magic_damage), 
+            "points of damage " + enemy.name + bcolours.ENDC)
 
-    players[target].take_damage(magic_damage)
-    print(bcolours.OKBLUE + "\n" + enemy.name.replace(" ","") + "'s " + spell.name + "deals", str(magic_damage), 
-    "points of damage" + enemies[enemy].name + bcolours.ENDC)
-
-    if players[target].get_hp() == 0:
-        print(players[target].name.replace(" ", "") + " has died. ")
-        del players[player]
+            if enemies[target].get_hp() == 0:
+                print(enemies[target].name.replace(" ", "") + " has died. ")
+                del enemies[target]
 
 def item(player):
     player.choose_item()
@@ -145,14 +145,14 @@ def item(player):
             print(bcolours.OKGREEN + "\n" + item.name + " Fully restores Hp/Mp " + bcolours.ENDC)
         
     elif item.type == "attack":
-        enemy = player.choose_target(enemies)
+        enemy_index = player.choose_target(enemies)
 
-        enemy.take_damage(item.prop)
-        print(bcolours.FAIL + "\n" + item.name + " deals", str(item.prop), "points of damage to " + players[target].name + bcolours.ENDC)
+        enemies[enemy_index].take_damage(item.prop)
+        print(bcolours.FAIL + "\n" + item.name + " deals", str(item.prop), "points of damage to " + enemies[enemy_index].name + bcolours.ENDC)
 
-        if enemies[enemy].get_hp() == 0:
-            print(enemies[enemy].name.replace(" ", "") + " has died. ")
-            del enemies[enemy]
+        if enemies[enemy_index].get_hp() == 0:
+            print(enemies[enemy_index].name.replace(" ", "") + " has died. ")
+            del enemies[enemy_index]
         # print ("Enemy chose", spell, "damage is", magic_damage)
 
 while running: 
@@ -217,11 +217,12 @@ while running:
             enemy_damage = enemies[0].generate_damage()
 
             players[target].take_damage(enemy_damage)
-            print(enemy.name.replace(" ", "") + " attacks" + 
+            print(enemy.name.replace(" ", "") + " attacks " + 
                 players[target].name.replace(" ", "") + " for", enemy_damage)
         
         elif enemy_choice == 1:
-           spell, magic_damage = enemy.choose_enemy_spell()
+           spell = enemy.choose_enemy_spell()
+           magic_damage = spell.generate_damage()
            enemy.reduce_mp(spell.cost)
            print("Enemy chose", spell.name, "damage is", magic_damage)
 

@@ -169,14 +169,18 @@ class Person:
             current_mp + "/" + str(self.max_mp) + " |" + bcolours.OKBLUE + mp_bar + bcolours.ENDC + "|" )
 
     def choose_enemy_spell(self):
-        magic_choice = random.randrange(0, len(self.magic))
-        spell = self.magic[magic_choice]
-        magic_damage = spell.generate_damage()
-
-        percent = self.hp / self.max_hp * 100
-
-        if self.mp < spell.cost or spell.type == "white" and percent > 50:
-            self.choose_enemy_spell()
-        
-        else: 
-            return spell, magic_damage
+        if self.get_hp() < 0.3 * self.get_max_hp():
+            magic_choice = random.randrange(5, 7)
+            spell = self.magic[magic_choice]
+            if self.get_mp() > spell.cost:
+                self.reduce_mp(spell.cost)
+            else:
+                return
+        else:
+            magic_choice = random.randrange(0, len(self.magic))
+            spell = self.magic[magic_choice]
+            if self.get_mp() > spell.cost:
+                self.reduce_mp(spell.cost)
+            else:
+                return
+        return spell
